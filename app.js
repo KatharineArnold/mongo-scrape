@@ -6,13 +6,10 @@ var logger = require('morgan');
 
 var bodyParser = require('body-parser')
 
-var request = require('request');
+var db = require("./models");
 
-const cheerio = require('cheerio')
-const $ = cheerio.load('<h2 class="title">Hello world</h2>')
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
 
 const mongoose = require('mongoose');
 
@@ -29,7 +26,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
