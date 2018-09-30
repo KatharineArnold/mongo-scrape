@@ -9,38 +9,52 @@ $.getJSON("/articles", function (data) {
         ${data[i].summary}
         <br>
         <button data-id=${data[i]._id} class="btn btn-primary" id='articleNotes'>Article Notes</button>               
-         <a href="#" class="btn btn-secondary">Save Article</a> 
+        <button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>               
         </p>    `);
     }
 });
 
-// function handleArticleSave() {
-//     // This function is triggered when the user wants to save an article
-//     // When we rendered the article initially, we attached a javascript object containing the headline id
-//     // to the element using the .data method. Here we retrieve that.
-//     var articleToSave = $(this)
-//       .parents(".card")
-//       .data();
 
-//     // Remove card from page
-//     $(this)
-//       .parents(".card")
-//       .remove();
 
-//     articleToSave.saved = true;
-//     // Using a patch method to be semantic since this is an update to an existing record in our collection
-//     $.ajax({
-//       method: "PUT",
-//       url: "/api/headlines/" + articleToSave._id,
-//       data: articleToSave
-//     }).then(function(data) {
-//       // If the data was saved successfully
-//       if (data.saved) {
-//         // Run the initPage function again. This will reload the entire list of articles
-//         initPage();
-//       }
-//     });
-//   }
+
+
+
+$(document).on("click", "#articleSave", function () {
+    // This function is triggered when the user wants to save an article
+    // When we rendered the article initially, we attached a javascript object containing the headline id
+    // to the element using the .data method. Here we retrieve that.
+
+
+    const articleId = $(this).data("id")
+
+    $.ajax({
+        method: "PATCH",
+        url: "/articles/" + articleId,
+        data: { saved: true }
+    }).then(data => {
+        console.log(data);
+    })
+
+
+    // // Remove card from page
+    // $(this)
+    //     .parents(".card")
+    //     .remove();
+
+    // articleToSave.saved = true;
+    // // Using a patch method to be semantic since this is an update to an existing record in our collection
+    // $.ajax({
+    //     method: "PUT",
+    //     url: "/api/headlines/" + articleToSave._id,
+    //     data: articleToSave
+    // }).then(function (data) {
+    //     // If the data was saved successfully
+    //     if (data.saved) {
+    //         // Run the initPage function again. This will reload the entire list of articles
+    //         initPage();
+    //     }
+    // });
+});
 
 
 // function handleArticleScrape() {
@@ -68,6 +82,7 @@ $(document).on("click", "#deleteNote", function (note) {
     // remove note from modal
     $(`#note_${noteId}`).remove();
 });
+
 
 
 
