@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(181, 227, 245);
+  background-color: whitesmoke;
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -13,16 +13,52 @@ body {
 
 
 
+.jumbotron{
+  background-image: url(https://images.pexels.com/photos/1061634/pexels-photo-1061634.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350);
+ background-attachment: fixed;
+ background-position: center;
+ background-repeat: no-repeat;
+ background-size: cover;
+   color: white ;
+   text-align: center;
+   max-width: 100%;
+  /*min-height: 300px;
+  padding-bottom: 20px;
+  width: 100%;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; */
+}
+
+.lead{
+  font-size: 50px;
+  font-weight: bolder;
+
+}
+
+.display-3{
+  font-weight: bolder;
+
+}
+
+.nav-link{
+  color:whitesmoke;
+}
+
+.fixed{
+  position: fixed;
+  float: right; 
+  width: 40%; 
+  right: 20px;
+}
+
 #articles {
   display: inline-block;
   overflow: auto;
-  width: 60%;
-  height: 700px;
+  height: 700px; 
 }
-#notes {
-  float: right;
-  width: 60%;
-}
+
 textarea, input {
   display: block;
   width: 100%;

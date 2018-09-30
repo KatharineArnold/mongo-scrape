@@ -10,6 +10,7 @@ var db = require("./models");
 
 
 var indexRouter = require('./routes/index');
+var noteRouter = require('./routes/notes');
 
 const mongoose = require('mongoose');
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/notes', noteRouter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
