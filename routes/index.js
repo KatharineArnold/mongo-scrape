@@ -25,26 +25,35 @@ router.get("/scrape", function (req, res) {
 
     $(".post-block").each(function (index, articleDiv) {
       var result = {};
+      try {
+        result.header = $(this).children("header").children("h2").children("a").text().trim();
+        result.url = $(this).children("header").children("h2").children("a").attr("href").trim();
+        result.summary = $(this).children("div")[0].firstChild.data.trim();
 
-      result.header = $(this).children("header").children("h2").children("a").text().trim();
-      result.url = $(this).children("header").children("h2").children("a").attr("href").trim();
-      result.summary = $(this).children("div")[0].firstChild.data.trim();
+        // console.log(index, " article header: ", result.header);
+        // console.log(index, " article url: ", result.url);
+        // console.log(index, " article summary: ", result.summary);
 
-      console.log(index, " article header: ", result.header);
-      console.log(index, " article url: ", result.url);
-      console.log(index, " article summary: ", result.summary);
-
-
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function (dbArticle) {
-          // View the added result in the console
-          console.log("here is the article" + dbArticle);
+        // Create a new Article using the `result` object built from scraping
+        db.Article.findOne({ url: result.url }).then(existingArticle => {
+          if (existingArticle === null) {
+            // Only save if new
+            db.Article.create(result)
+              .then(function (dbArticle) {
+                // View the added result in the console
+                console.log("Added article: " + dbArticle);
+              })
+              .catch(function (err) {
+                // If an error occurred, send it to the client
+                return res.json(err);
+              });
+          }
         })
-        .catch(function (err) {
-          // If an error occurred, send it to the client
-          return res.json(err);
-        });
+
+      } catch (error) {
+        console.error("Unable to scrape article at index: ", index);
+      }
+
     });
 
     res.send("Scrape Complete");
@@ -77,8 +86,16 @@ router.patch("/articles/:id", function (req, res) {
 
 // Route for getting all Articles from the db
 router.get("/articles", function (req, res) {
+  // /articles
+  let query = {}
+  // /articles?saved=true
+  if (req.query.saved === 'true') {
+    //query = { saved: true }
+    query.saved = true;
+  }
+
   // Grab every document in the Articles collection
-  db.Article.find({})
+  db.Article.find(query)
     .then(function (dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);

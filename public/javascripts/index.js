@@ -1,20 +1,39 @@
-// Grab the articles as a json
-$.getJSON("/articles", function (data) {
-    // For each one
-    for (var i = 0; i < data.length; i++) {
-        // Display the apropos information on the page
-        $("#articles").append(`<p data-id=${data[i]._id}> 
-        <a href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
-        <br>
-        ${data[i].summary}
-        <br>
-        <button data-id=${data[i]._id} class="btn btn-primary" id='articleNotes'>Article Notes</button>               
-        <button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>               
-        </p>    `);
+scrapeArticles();
+
+function loadArticles(saved) {
+    let route = '/articles';
+    if (saved) {
+        route += '?saved=true';
     }
-});
+
+    $("#articles").empty();
+    $.getJSON(route, function (data) {
+        // For each one
+        for (var i = 0; i < data.length; i++) {
+            // Display the apropos information on the page
+            $("#articles").prepend(`<p data-id=${data[i]._id}> 
+            <a href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
+            <br>
+            ${data[i].summary}
+            <br>
+            <button data-id=${data[i]._id} class="btn btn-primary" id='articleNotes'>Article Notes</button>
+            ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>`}               
+            </p>`);
+        }
+    });
+}
+
+function scrapeArticles() {
+    $.ajax({ method: "GET", url: "/scrape" }).then(loadArticles());
+}
 
 
+$(document).on("click", "#savedArticles", function () {
+    loadArticles(true);
+})
+$(document).on("click", "#homeLink", function () {
+    scrapeArticles();
+})
 
 
 
@@ -36,24 +55,7 @@ $(document).on("click", "#articleSave", function () {
     })
 
 
-    // // Remove card from page
-    // $(this)
-    //     .parents(".card")
-    //     .remove();
 
-    // articleToSave.saved = true;
-    // // Using a patch method to be semantic since this is an update to an existing record in our collection
-    // $.ajax({
-    //     method: "PUT",
-    //     url: "/api/headlines/" + articleToSave._id,
-    //     data: articleToSave
-    // }).then(function (data) {
-    //     // If the data was saved successfully
-    //     if (data.saved) {
-    //         // Run the initPage function again. This will reload the entire list of articles
-    //         initPage();
-    //     }
-    // });
 });
 
 
