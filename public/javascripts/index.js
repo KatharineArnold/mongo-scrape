@@ -1,3 +1,5 @@
+
+
 scrapeArticles();
 
 function loadArticles(saved) {
@@ -11,20 +13,40 @@ function loadArticles(saved) {
         // For each one
         for (var i = 0; i < data.length; i++) {
             // Display the apropos information on the page
-            $("#articles").prepend(`<p data-id=${data[i]._id}> 
-            <a href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
-            <br>
-            ${data[i].summary}
-            <br>
-            <button data-id=${data[i]._id} class="btn btn-primary" id='articleNotes'>Article Notes</button>
-            ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>`}               
-            </p>`);
+            $("#articles").prepend(
+                `<div class="card border-dark mb-3" data-id=${data[i]._id} style="max-width: 20rem;">
+                <a class="articleHeader card-header" href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
+                <div class="card-body">
+               <p class="card-text">${data[i].summary}</p>
+               <button data-id=${data[i]._id} class="btn btn-primary btn-notes" id='articleNotes'>Article Notes</button>
+            ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-outline-secondary" id='articleSave'>Save Article</button>`}                   
+                </div>
+            </div>`
+            );
         }
     });
 }
 
+
+
+// `<p data-id=${data[i]._id}> 
+// <a class="articleHeader" href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
+// <br>
+// ${data[i].summary}
+// <br>
+// <button data-id=${data[i]._id} class="btn btn-primary btn-notes" id='articleNotes'>Article Notes</button>
+// ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>`}               
+// </p>`
+
+
+
+
+
 function scrapeArticles() {
-    $.ajax({ method: "GET", url: "/scrape" }).then(loadArticles());
+    $.ajax({
+        method: "GET",
+        url: "/scrape"
+    }).then(loadArticles());
 }
 
 
@@ -39,11 +61,6 @@ $(document).on("click", "#homeLink", function () {
 
 
 $(document).on("click", "#articleSave", function () {
-    // This function is triggered when the user wants to save an article
-    // When we rendered the article initially, we attached a javascript object containing the headline id
-    // to the element using the .data method. Here we retrieve that.
-
-
     const articleId = $(this).data("id")
 
     $.ajax({
@@ -57,18 +74,6 @@ $(document).on("click", "#articleSave", function () {
 
 
 });
-
-
-// function handleArticleScrape() {
-//     // This function handles the user clicking any "scrape new article" buttons
-//     $.get("/scrape").then(function(data) {
-//       // If we are able to successfully scrape the NYTIMES and compare the articles to those
-//       // already in our collection, re render the articles on the page
-//       // and let the user know how many unique articles we were able to save
-//       initPage();
-//       bootbox.alert($("<h3 class='text-center m-top-80'>").text(data.message));
-//     });
-//   }
 
 
 //delete note
@@ -85,19 +90,10 @@ $(document).on("click", "#deleteNote", function (note) {
     $(`#note_${noteId}`).remove();
 });
 
-
-
-
-
-
-
-
-
 // Whenever someone clicks a p tag
 $(document).on("click", "#articleNotes", function () {
     $(".modal").modal()
     // Empty the notes from the note section
-    $("#notes").empty();
     // Save the id from the p tag
     var thisId = $(this).attr("data-id");
 
@@ -110,8 +106,6 @@ $(document).on("click", "#articleNotes", function () {
         .then(function (data) {
             console.log(data);
 
-
-
             $(".modal-body").empty();
 
             // An input to enter a new title
@@ -119,23 +113,26 @@ $(document).on("click", "#articleNotes", function () {
             // A textarea to add a new note body
             $(".modal-body").append("<textarea placeholder='Enter Note Body' id='bodyinput' name='body'></textarea>");
             // A button to submit a new note, with the id of the article saved to it
-            $(".modal-body").append("<button class='btn btn-primary' data-id='" + thisId + "' id='savenote'>Save Note</button>");
+            $(".modal-body").append("<button class='btn btn-outline-primary' data-id='" + thisId + "' id='savenote'>Save Note</button>");
 
 
             //loop through all notes an render in modal
             data.forEach(note => {
                 $(".modal-body").append(`
-                    <div id="note_${note._id}">
-                        <h3>${note.title}</h3>
-                        <p>${note.body}</p>
-                      <button class="btn btn-outline-danger" data-id= ${note._id} id='deleteNote'>Delete Note</button>
-                    </div>
+                <div id="note_${note._id}" class="noteCard card text-white bg-primary mb-3" style="max-width: 20rem;">
+                <div class="card-body">
+                  <h4 class="card-title">${note.title}</h4>
+                  <p class="card-text">${note.body}</p>
+                  <button class="btn btn-outline-danger" data-id= ${note._id} id='deleteNote'>Delete Note</button>
+                </div>
                 `);
             });
 
 
         });
 });
+
+
 
 // When you click the savenote button
 $(document).on("click", "#savenote", function () {

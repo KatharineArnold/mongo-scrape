@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var db = require('../models');
 var request = require('request');
-// const axios = require('axios')
 
 var cheerio = require('cheerio')
 
@@ -18,7 +17,6 @@ router.get('/', function (req, res, next) {
 router.get("/scrape", function (req, res) {
   // First, we grab the body of the html with request
   request.get("https://techcrunch.com/", function (error, response, body) {
-    // axios.get("https://techcrunch.com/").then(function (response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(body);
 
@@ -29,10 +27,6 @@ router.get("/scrape", function (req, res) {
         result.header = $(this).children("header").children("h2").children("a").text().trim();
         result.url = $(this).children("header").children("h2").children("a").attr("href").trim();
         result.summary = $(this).children("div")[0].firstChild.data.trim();
-
-        // console.log(index, " article header: ", result.header);
-        // console.log(index, " article url: ", result.url);
-        // console.log(index, " article summary: ", result.summary);
 
         // Create a new Article using the `result` object built from scraping
         db.Article.findOne({ url: result.url }).then(existingArticle => {
