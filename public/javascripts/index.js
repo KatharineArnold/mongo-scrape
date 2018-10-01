@@ -19,27 +19,15 @@ function loadArticles(saved) {
                 <div class="card-body">
                <p class="card-text">${data[i].summary}</p>
                <button data-id=${data[i]._id} class="btn btn-primary btn-notes" id='articleNotes'>Article Notes</button>
-            ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-outline-secondary" id='articleSave'>Save Article</button>`}                   
+            ${ saved
+                    ? `<button data-id=${data[i]._id} class="btn btn-outline-secondary" id='articleUnsave'>Unsave Article</button>`
+                    : `<button data-id=${data[i]._id} class="btn btn-outline-secondary" id='articleSave'>Save Article</button>`}                   
                 </div>
             </div>`
             );
         }
     });
 }
-
-
-
-// `<p data-id=${data[i]._id}> 
-// <a class="articleHeader" href="${data[i].url}"><span style="font-weight: bold">${data[i].header}</span></a>
-// <br>
-// ${data[i].summary}
-// <br>
-// <button data-id=${data[i]._id} class="btn btn-primary btn-notes" id='articleNotes'>Article Notes</button>
-// ${ saved ? '' : `<button data-id=${data[i]._id} class="btn btn-secondary" id='articleSave'>Save Article</button>`}               
-// </p>`
-
-
-
 
 
 function scrapeArticles() {
@@ -70,8 +58,20 @@ $(document).on("click", "#articleSave", function () {
     }).then(data => {
         console.log(data);
     })
+});
 
 
+$(document).on("click", "#articleUnsave", function () {
+    const articleId = $(this).data("id")
+
+    $.ajax({
+        method: "PATCH",
+        url: "/articles/" + articleId,
+        data: { saved: false }
+    }).then(data => {
+        console.log(data);
+        loadArticles(true);
+    })
 
 });
 
